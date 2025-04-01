@@ -1,6 +1,5 @@
 package com.packt.blog.dto;
 
-import java.time.LocalDate;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +14,4 @@ public class ArticleRequestDto {
   private String title;
   @NotEmpty(message = "The content can not be empty")
   private String content;
-  private LocalDate updatedAt;
 }
