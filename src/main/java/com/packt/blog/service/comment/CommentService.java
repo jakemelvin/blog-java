@@ -12,24 +12,44 @@ import com.packt.blog.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService implements ICommentService {
-  private final CommentRepository commentRepository;
-  private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final ArticleRepository articleRepository;
 
-  @Override
-  public Comment createComment(Long articleId, CommentRequestDto dto) {
-    Article articleLinked = articleRepository.findById(articleId)
-        .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
-    return commentRepository.save(CommentMapper.toEntity(dto, articleLinked));
-  }
+    @Override
+    public Comment createComment(Long articleId, CommentRequestDto dto) {
+        Article articleLinked = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+        return commentRepository.save(CommentMapper.toEntity(dto, articleLinked));
+    }
 
-  @Override
-  public void deleteComment(Long commentId) {
-    Comment commentToDelete = commentRepository.findById(commentId)
-        .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
-    commentRepository.delete(commentToDelete);
-  }
+    @Override
+    public void deleteComment(Long commentId) {
+        Comment commentToDelete = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+        commentRepository.delete(commentToDelete);
+    }
+
+    @Override
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
+    }
+
+    @Override
+    public List<Comment> getCommentByArticleId(Long articleId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+        return commentRepository.findByArticle(article);
+    }
+
+    @Override
+    public Comment updateComment(Long commentId, CommentRequestDto dto) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+        comment.setContent(dto.getContent());
+        return commentRepository.save(comment);
+    }
 
 }
